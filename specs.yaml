@@ -71,6 +71,8 @@ paths:
           description: error
           schema:
             $ref: '#/definitions/Error'
+      security:
+        - {basic: []}
 definitions:
   ServiceAllocation:
     properties:
