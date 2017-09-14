@@ -90,9 +90,6 @@ definitions:
         type: string
         description: Incoterms rule, also known as customs invoice type in
           our V1 API.
-    required:
-      - carrier
-      - service
     type: object
     example:
       carrier: Generic Carrier
