@@ -117,6 +117,14 @@ definitions:
     - message
     - status
     type: object
+    example:
+      status: Allocated - ready for printing
+      message: Carrier and service allocated.
+      carrier: Generic Carrier
+      service: Generic Domestic Service GDOM
+      enhancements: {}
+      package_type: null
+      incoterms_rule: null
   Error:
     required:
       - error
