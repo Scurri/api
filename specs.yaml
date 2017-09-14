@@ -6,7 +6,7 @@ info:
     The Scurri Platform API is a RESTful web service that offers import and
     update functionality for shipments, documents and manifests.
 host: sandbox.scurri.co.uk
-basePath: /api/v2
+basePath: /api/2.0.0
 schemes:
   - https
 consumes:
@@ -19,7 +19,25 @@ securityDefinitions:
 paths:
   '/company/{company_slug}/shipments/{identifier}/allocate':
     post:
-      description: Allocate a service to a shipment
+      description: |
+        ## Service allocation.
+        Use this endpoint to allocate a service to a shipment.
+        The endpoint supports two scenarios:
+        - Allocate a shipment to specific carrier and service, the same way
+          as you allocate manually in the Scurri UI.
+        - Allocate using rules.
+
+        ### Manual allocation
+        To do the manual allocation, you have to specify `carrier` and
+        `service` fields at least.
+
+        To use `shipment_method` field does not make sense in this scenario,
+        and it will not have any effect.
+
+        ### Allocation using rules
+        To do allocation using rules, please do not specify `carrier` and
+        `service` fields.
+
       operationId: allocateShipment
       parameters:
         - in: path
@@ -51,46 +69,40 @@ definitions:
   ServiceAllocation:
     properties:
       carrier:
-        title: carrier
         type: string
-      enhancements:
-        title: enhancements
-        type: object
-      incoterms_rule:
-        title: incoterms_rule
-        type: string
-      package_type:
-        title: package_type
-        type: string
+        description: Carrier name, use it only for manual allocation.
       service:
-        title: service
         type: string
+        description: Service identifier, use it only for manual allocation.
       shipment_method:
-        title: shipment_method
         type: string
+        description: Order shipment method, used by Rules only.
+      package_type:
+        type: string
+        description: Service package type.
+      enhancements:
+        type: object
+        description: Map of service enhancements.
+      incoterms_rule:
+        type: string
+        description: Incoterms rule, also known as customs invoice type in
+          our V1 API.
     type: object
   ServiceAllocationResult:
     properties:
       status:
-        title: status
         type: string
       message:
-        title: message
         type: string
       carrier:
-        title: carrier
         type: string
       service:
-        title: service
         type: string
       enhancements:
-        title: enhancements
         type: object
       incoterms_rule:
-        title: incoterms_rule
         type: string
       package_type:
-        title: package_type
         type: string
     required:
     - message
