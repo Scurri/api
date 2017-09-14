@@ -19,6 +19,9 @@ securityDefinitions:
 paths:
   '/company/{company_slug}/shipments/{identifier}/allocate':
     post:
+      tags:
+        - shipment
+        - allocation
       description: |
         ### Service allocation.
         Use this endpoint to allocate a service to a shipment.
