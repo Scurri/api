@@ -20,7 +20,6 @@ paths:
   '/company/{company_slug}/shipments/{identifier}/allocate':
     post:
       tags:
-        - Shipment
         - Allocation
       description: |
         ### Service allocation.
