@@ -59,7 +59,30 @@ paths:
           name: service allocation request
           description: Service allocation fields. All fields are optional.
           schema:
-            $ref: '#/definitions/ServiceAllocation'
+            properties:
+              carrier:
+                type: string
+                description: Carrier name, use it only for manual allocation.
+              service:
+                type: string
+                description: Service identifier, use it only for manual allocation.
+              shipment_method:
+                type: string
+                description: Order shipment method, used by Rules only.
+              package_type:
+                type: string
+                description: Service package type.
+              enhancements:
+                type: object
+                description: Map of service enhancements.
+              incoterms_rule:
+                type: string
+                description: Incoterms rule, also known as customs invoice type in
+                  our V1 API.
+            type: object
+            example:
+              carrier: Generic Carrier
+              service: Generic Domestic Service GDOM
           required: false
       responses:
         '200':
