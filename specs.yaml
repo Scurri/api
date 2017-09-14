@@ -1,0 +1,104 @@
+swagger: '2.0'
+info:
+  version: 2.0.0
+  title: Scurri API
+  description: |
+    The Scurri Platform API is a RESTful web service that offers import and
+    update functionality for shipments, documents and manifests.
+host: sandbox.scurri.co.uk
+basePath: /api/v2
+schemes:
+  - https
+consumes:
+  - application/json
+produces:
+  - application/json
+securityDefinitions:
+  basic:
+    type: basic
+paths:
+  '/company/{company_slug}/shipments/{identifier}/allocate':
+    post:
+      description: Allocate a service to a shipment
+      operationId: allocateShipment
+      parameters:
+        - in: path
+          name: company_slug
+          type: string
+          required: true
+          description: Slug of your company
+        - in: path
+          name: identifier
+          type: string
+          required: true
+          description: Identifier of a shipment
+        - in: body
+          name: service allocation request
+          description: Service allocation fields. All fields are optional.
+          schema:
+            $ref: '#/definitions/ServiceAllocation'
+          required: false
+      responses:
+        '200':
+          description: Response of service allocation result
+          schema:
+            $ref: '#/definitions/ServiceAllocationResult'
+        default:
+          description: error
+          schema:
+            $ref: '#/definitions/Error'
+definitions:
+  ServiceAllocation:
+    properties:
+      carrier:
+        title: carrier
+        type: string
+      enhancements:
+        title: enhancements
+        type: object
+      incoterms_rule:
+        title: incoterms_rule
+        type: string
+      package_type:
+        title: package_type
+        type: string
+      service:
+        title: service
+        type: string
+      shipment_method:
+        title: shipment_method
+        type: string
+    type: object
+  ServiceAllocationResult:
+    properties:
+      status:
+        title: status
+        type: string
+      message:
+        title: message
+        type: string
+      carrier:
+        title: carrier
+        type: string
+      service:
+        title: service
+        type: string
+      enhancements:
+        title: enhancements
+        type: object
+      incoterms_rule:
+        title: incoterms_rule
+        type: string
+      package_type:
+        title: package_type
+        type: string
+    required:
+    - message
+    - status
+    type: object
+  Error:
+    required:
+      - error
+    properties:
+      error:
+        type: string
