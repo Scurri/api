@@ -89,6 +89,9 @@ definitions:
         description: Incoterms rule, also known as customs invoice type in
           our V1 API.
     type: object
+    example:
+      carrier: Generic Carrier
+      service: Generic Domestic Service GDOM
   ServiceAllocationResult:
     properties:
       status:
