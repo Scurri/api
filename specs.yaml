@@ -20,21 +20,21 @@ paths:
   '/company/{company_slug}/shipments/{identifier}/allocate':
     post:
       description: |
-        ## Service allocation.
+        ### Service allocation.
         Use this endpoint to allocate a service to a shipment.
         The endpoint supports two scenarios:
         - Allocate a shipment to specific carrier and service, the same way
           as you allocate manually in the Scurri UI.
         - Allocate using rules.
 
-        ### Manual allocation
+        #### Manual allocation
         To do the manual allocation, you have to specify `carrier` and
         `service` fields at least.
 
         To use `shipment_method` field does not make sense in this scenario,
         and it will not have any effect.
 
-        ### Allocation using rules
+        #### Allocation using rules
         To do allocation using rules, please do not specify `carrier` and
         `service` fields.
 
