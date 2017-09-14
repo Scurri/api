@@ -88,7 +88,33 @@ paths:
         '200':
           description: Response of service allocation result
           schema:
-            $ref: '#/definitions/ServiceAllocationResult'
+            properties:
+              status:
+                type: string
+              message:
+                type: string
+              carrier:
+                type: string
+              service:
+                type: string
+              enhancements:
+                type: object
+              incoterms_rule:
+                type: string
+              package_type:
+                type: string
+            required:
+            - message
+            - status
+            type: object
+            example:
+              status: Allocated - ready for printing
+              message: Carrier and service allocated.
+              carrier: Generic Carrier
+              service: Generic Domestic Service GDOM
+              enhancements: {}
+              package_type: null
+              incoterms_rule: null
         default:
           description: error
           schema:
@@ -96,59 +122,6 @@ paths:
       security:
         - {basic: []}
 definitions:
-  ServiceAllocation:
-    properties:
-      carrier:
-        type: string
-        description: Carrier name, use it only for manual allocation.
-      service:
-        type: string
-        description: Service identifier, use it only for manual allocation.
-      shipment_method:
-        type: string
-        description: Order shipment method, used by Rules only.
-      package_type:
-        type: string
-        description: Service package type.
-      enhancements:
-        type: object
-        description: Map of service enhancements.
-      incoterms_rule:
-        type: string
-        description: Incoterms rule, also known as customs invoice type in
-          our V1 API.
-    type: object
-    example:
-      carrier: Generic Carrier
-      service: Generic Domestic Service GDOM
-  ServiceAllocationResult:
-    properties:
-      status:
-        type: string
-      message:
-        type: string
-      carrier:
-        type: string
-      service:
-        type: string
-      enhancements:
-        type: object
-      incoterms_rule:
-        type: string
-      package_type:
-        type: string
-    required:
-    - message
-    - status
-    type: object
-    example:
-      status: Allocated - ready for printing
-      message: Carrier and service allocated.
-      carrier: Generic Carrier
-      service: Generic Domestic Service GDOM
-      enhancements: {}
-      package_type: null
-      incoterms_rule: null
   Error:
     required:
       - error
