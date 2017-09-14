@@ -23,6 +23,7 @@ paths:
         ### Service allocation.
         Use this endpoint to allocate a service to a shipment.
         The endpoint supports two scenarios:
+
         1) Allocate a shipment to specific carrier and service, the same way
           as you allocate manually in the Scurri UI.
 
