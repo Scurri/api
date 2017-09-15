@@ -1,4 +1,4 @@
-FORMAT: 1A9
+FORMAT: 1A
 HOST: https://sandbox.scurri.co.uk/api/2.0.0
 
 # Scurri API
@@ -109,16 +109,17 @@ be available for editing.
 
 # Group Shipments
 
-## Shipments [/company/{company_slug}/shipments/{identifier}/]
-
-+ Parameters
-    + company_slug: `api-test-company` (string) - The slug of your company in Scurri.
-    + identifier (string) - The identifier for the shipment
-    
 This group of API calls allow you to interact with your shipments
 in Scurri. You can list and search through them, create new ones, get
 their status and print the necessary documentation (labels and custom
 invoices, when needed).
+
+## Allocate [/company/{company_slug}/shipments/{identifier}/allocate]
+
++ Parameters
+    + company_slug: `api-test-company` (string) - The slug of your company in Scurri.
+    + identifier (string) - The identifier for the shipment
+
 
 ### Allocate the specified shipment [POST]
 
@@ -127,10 +128,9 @@ two scenarios:
 
 - Allocate a shipment to specific carrier and service, the same way
 as you allocate manually in the Scurri UI.
-
 - Allocate using rules.
 
-**Manual allocation**
+#### Manual allocation
 
 To do the manual allocation, you have to specify `carrier` and
 `service` fields.
@@ -138,7 +138,27 @@ To do the manual allocation, you have to specify `carrier` and
 To use `shipment_method` field does not make sense in this scenario,
 and it will not have any effect.
 
-**Allocation using rules**
+
+#### Allocation using rules
+
 To do allocation using rules, please do not specify `carrier` and
 `service` fields.
 
+
++ Request (application/json)
+
+    + Headers
+
+            Authorization: Basic YXBpdGVzdDphcGkgcGFzc3dvcmQgdGVzdA==
+            
+    + Body
+    
+            {
+                "carrier: "Generic Carrier",
+                "service": "Generic Domestic Service GDOM"
+            }
+
++ Response 200 (application/json)
+            
+            {
+            }
