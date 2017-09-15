@@ -114,14 +114,10 @@ in Scurri. You can list and search through them, create new ones, get
 their status and print the necessary documentation (labels and custom
 invoices, when needed).
 
-## Allocate [/company/{company_slug}/shipments/{identifier}/allocate]
-
-+ Parameters
-    + company_slug: `api-test-company` (string) - The slug of your company in Scurri.
-    + identifier (string) - The identifier for the shipment
+## Shipments [/company/{company_slug}/shipments/{identifier}/]
 
 
-### Allocate the specified shipment [POST]
+### Allocate [POST /company/{company_slug}/shipments/{identifier}/allocate]
 
 Use this endpoint to allocate a service to a shipment. The endpoint supports 
 two scenarios:
@@ -145,7 +141,11 @@ To do allocation using rules, please do not specify `carrier` and
 `service` fields.
 
 
-+ Request (application/json)
++ Parameters
+    + company_slug: `api-test-company` (string) - The slug of your company in Scurri.
+    + identifier: `allocate-me` (string) - The identifier for the shipment
+
++ Request manual allocation (application/json)
 
     + Headers
 
@@ -154,10 +154,77 @@ To do allocation using rules, please do not specify `carrier` and
     + Body
     
             {
-                "carrier: "Generic Carrier",
+                "carrier": "Generic Carrier",
                 "service": "Generic Domestic Service GDOM"
             }
+    
+    + Schema
+            
+            {
+                "properties": {
+                    "carrier": {
+                        "type": "string",
+                        "description": "Carrier name, use the field only for manual allocation."
+                    },
+                    "service": {
+                        "type": "string"
+                        "description": "Service identifier, use it only for manual allocation.",
+                    },
+                    "shipment_method": {
+                        "type": "string",
+                        "description": "Order shipment method, used by Rules only."
+                    },
+                    "package_type": {
+                        "type": "string",
+                        "description": "Service package type."
+                    },
+                    "enhancements": {
+                        "type": "object"
+                        "description": "Map of service enhancements."
+                    },
+                    "incoterms_rule": {
+                        "type": "string"
+                        "description": "Incoterms rule, also known as customs invoice type in our V1 API.",
+                    }
+                },
+                "required": ["carrier", "service"]
+            }
+            
++ Request allocation by rules (application/json)
 
+    + Headers
+
+            Authorization: Basic YXBpdGVzdDphcGkgcGFzc3dvcmQgdGVzdA==
+            
+    + Body
+    
+            {
+                "shipment_method": "My rules set"
+            }
+    
+    + Schema
+            
+            {
+                "properties": {
+                    "shipment_method": {
+                        "type": "string",
+                        "description": "Order shipment method, used by Rules only."
+                    },
+                    "package_type": {
+                        "type": "string",
+                        "description": "Service package type."
+                    },
+                    "enhancements": {
+                        "type": "object"
+                        "description": "Map of service enhancements."
+                    },
+                    "incoterms_rule": {
+                        "type": "string"
+                        "description": "Incoterms rule, also known as customs invoice type in our V1 API.",
+                    }
+                }
+            }
+            
 + Response 200 (application/json)
             
             {
