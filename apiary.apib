@@ -1,7 +1,7 @@
 FORMAT: 1A
 HOST: https://sandbox.scurri.co.uk/api/2.0.0
 
-# Scurri API
+# Scurri API 2.0.0
 
 The Scurri Platform API is a RESTful web service that offers import
 and update functionality for shipments, documents and manifests.
@@ -167,24 +167,20 @@ To do allocation using rules, please do not specify `carrier` and
                         "description": "Carrier name, use the field only for manual allocation."
                     },
                     "service": {
-                        "type": "string"
-                        "description": "Service identifier, use it only for manual allocation.",
-                    },
-                    "shipment_method": {
                         "type": "string",
-                        "description": "Order shipment method, used by Rules only."
+                        "description": "Service identifier, use it only for manual allocation."
                     },
                     "package_type": {
                         "type": "string",
                         "description": "Service package type."
                     },
                     "enhancements": {
-                        "type": "object"
+                        "type": "object",
                         "description": "Map of service enhancements."
                     },
                     "incoterms_rule": {
-                        "type": "string"
-                        "description": "Incoterms rule, also known as customs invoice type in our V1 API.",
+                        "type": "string",
+                        "description": "Incoterms rule, also known as customs invoice type in our V1 API."
                     }
                 },
                 "required": ["carrier", "service"]
@@ -215,18 +211,20 @@ To do allocation using rules, please do not specify `carrier` and
                         "description": "Service package type."
                     },
                     "enhancements": {
-                        "type": "object"
+                        "type": "object",
                         "description": "Map of service enhancements."
                     },
                     "incoterms_rule": {
-                        "type": "string"
-                        "description": "Incoterms rule, also known as customs invoice type in our V1 API.",
+                        "type": "string",
+                        "description": "Incoterms rule, also known as customs invoice type in our V1 API."
                     }
                 }
             }
             
 + Response 200 (application/json)
-            
+
+    + Body
+    
             {
                 "status": "Allocated - ready for printing",
                 "message": "Carrier and service allocated.",
@@ -236,3 +234,39 @@ To do allocation using rules, please do not specify `carrier` and
                 "package_type": null,
                 "incoterms_rule": null
             }
+    
+    + Schema
+        
+         {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "string",
+                    "description": "Shipment status"
+                },
+                "message": {
+                    "type": "string",
+                    "description": "Shipment status message. It is rejection reason when a shipment cannot be allocated"
+                },
+                "carrier": {
+                    "type": "string",
+                    "description": "Carrier name shipment allocated to."
+                },
+                "service": {
+                    "type": "string",
+                    "description": "Service identifier shipment allocated to."
+                },
+                "package_type": {
+                    "type": "string",
+                    "description": "Shipment package type."
+                },
+                "enhancements": {
+                    "type": "object",
+                    "description": "Map of shipment service enhancements."
+                },
+                "incoterms_rule": {
+                    "type": "string",
+                    "description": "Shipment incoterms rule"
+                }               
+            }
+         }
