@@ -1,0 +1,144 @@
+FORMAT: 1A9
+HOST: https://sandbox.scurri.co.uk/api/2.0.0
+
+# Scurri API
+
+The Scurri Platform API is a RESTful web service that offers import
+and update functionality for shipments, documents and manifests.
+
+## HTTP Codes
+
+HTTP codes are used to differentiate between successful and failed
+responses. As per the HTTP standard: 20x codes are for successful
+requests, 40x codes for errors with validation or permissions, 50x
+codes for unexpected internal server errors.
+
+
+## Authentication
+
+All requests must be authenticated using [Basic
+Auth](https://en.wikipedia.org/wiki/Basic_access_authentication#Client_side).
+
+With Basic Auth, you have to send the username and password **base64-encoded** 
+in the standard Basic manner, e.g.
+`Authorization: Basic YXBpdGVzdDphcGkgcGFzc3dvcmQgdGVzdA==`.
+
+Here is some sample code in Python to generate the value of the header:
+
+```python
+>>> import base64
+>>> username = 'apitest'
+>>> password = 'api test password'
+>>> print base64.b64encode(username + ':' + password)
+YXBpdGVzdDphcGkgdGVzdCBwYXNzd29yZA==
+```
+
+Failed requests will return a 401 HTTP code.
+
+## Request format
+
+All body payloads must be in JSON format, unless stated otherwise.
+
+As a result, the `Content-Type` header must be set to `application/json`.
+
+## Using the Scurri API
+
+### General
+
+The most important features of the Scurri API are:
+
+- Importing shipments
+- Getting the necessary documents (labels and/or commercial invoices)
+- Manifesting shipments
+
+The Scurri API works only on top of HTTPS, so that the connection is
+encrypted.
+
+The current document describes Scurri API at version `2.0.0`. This means that 
+all URLs should be prefixed with the path `/2.0.0/`.
+
+### Concepts
+
+Each company is assigned a **slug**, which is an identifier for this
+company and is used in all URLs of this API. The slug can be found in
+the URLs used in Scurri: it is the value after the path `company` and
+until the next forward slash (`/`). That is, in the URL
+`/company/my-company/manifests` the slug is the value `my-company`.
+
+Each shipment is identified by a unique **identifier** which you
+should provide. This identifier should be unique across all of your
+shipments. If all of your orders correspond to a single
+shipment, then the order number is a good candidate for this.
+
+### Consignment Lifecycle
+
+#### Importing shipments
+
+The first step is to import your shipments into Scurri. They can be imported 
+individually (one by one) or as part of a batch. Scurri has optimized the
+import process to support importing thousands of shipments in one API call.
+
+#### Getting the label for a shipment
+
+After a shipment has been imported, Scurri will automatically
+allocate it to a carrier and a service based on the shipment rules you
+have defined in our user interface, alternatively you can specificy these 
+values manually in the API.
+
+At this point Scurri will try to validate that the shipment meets the
+criteria for using the specified carrier and service, e.g. typically these 
+would be the weight limits, dimension limits and destination restrictions.
+
+If the shipment does not fail the validation step you can download
+its label(s) and any customs documentation required, either as PDF documents or
+PNG. The latter is useful for embedding the label(s) in another document.
+After the label has been generated, the tracking number for the shipment is 
+available in the shipment details.
+
+If, on the other hand, this validation had failed (that it exceeds the
+weight, dimension or destination limits and restrictions) then you
+would get an error back with the reason the validation failed.
+
+#### Manifesting shipments
+
+The last step is marking the shipments as manifested. When you do
+this, Scurri will generate the manifest documentation that you may
+have to provide to the carrier and at the same time notify the
+carrier. Note - Once you've manifested a conisgnment it will no longer
+be available for editing.
+
+# Group Shipments
+
+## Shipments [/company/{company_slug}/shipments/{identifier}/]
+
++ Parameters
+    + company_slug: `api-test-company` (string) - The slug of your company in Scurri.
+    + identifier (string) - The identifier for the shipment
+    
+This group of API calls allow you to interact with your shipments
+in Scurri. You can list and search through them, create new ones, get
+their status and print the necessary documentation (labels and custom
+invoices, when needed).
+
+### Allocate the specified shipment [POST]
+
+Use this endpoint to allocate a service to a shipment. The endpoint supports 
+two scenarios:
+
+- Allocate a shipment to specific carrier and service, the same way
+as you allocate manually in the Scurri UI.
+
+- Allocate using rules.
+
+**Manual allocation**
+
+To do the manual allocation, you have to specify `carrier` and
+`service` fields.
+
+To use `shipment_method` field does not make sense in this scenario,
+and it will not have any effect.
+
+**Allocation using rules**
+To do allocation using rules, please do not specify `carrier` and
+`service` fields.
+
