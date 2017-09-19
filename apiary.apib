@@ -3,27 +3,22 @@ HOST: https://sandbox.scurri.co.uk/api/2.0.0
 
 # Scurri API 2.0.0
 
-The Scurri Platform API is a RESTful web service that offers import
-and update functionality for shipments, documents and manifests.
+The Scurri Platform API is a RESTful web service that provides both import and update functionality for shipments, documents, and manifests.
 
 ## HTTP Codes
 
-HTTP codes are used to differentiate between successful and failed
-responses. As per the HTTP standard: 20x codes are for successful
-requests, 40x codes for errors with validation or permissions, 50x
-codes for unexpected internal server errors.
+HTTP codes are used to differentiate between successful and failed responses. As per the HTTP standard: 20x codes are for successful requests, 40x codes for errors with validation or permissions, and 50x codes for unexpected internal server errors.
 
 
 ## Authentication
 
-All requests must be authenticated using [Basic
-Auth](https://en.wikipedia.org/wiki/Basic_access_authentication#Client_side).
+All API requests need to be authenticated using [HTTP Basic Auth](https://en.wikipedia.org/wiki/Basic_access_authentication#Client_side).
 
 With Basic Auth, you have to send the username and password **base64-encoded** 
 in the standard Basic manner, e.g.
 `Authorization: Basic YXBpdGVzdDphcGkgcGFzc3dvcmQgdGVzdA==`.
 
-Here is some sample code in Python to generate the value of the header:
+Here's how to generate the value of the header in Python:
 
 ```python
 >>> import base64
@@ -33,29 +28,19 @@ Here is some sample code in Python to generate the value of the header:
 YXBpdGVzdDphcGkgdGVzdCBwYXNzd29yZA==
 ```
 
-Failed requests will return a 401 HTTP code.
+All API requests must be made over HTTPS. Calls made over plain HTTP will fail. API requests without authentication will also fail.
 
 ## Request format
 
 All body payloads must be in JSON format, unless stated otherwise.
 
-As a result, the `Content-Type` header must be set to `application/json`.
+The `Content-Type` header must be set to `application/json`.
 
 ## Using the Scurri API
 
 ### General
 
-The most important features of the Scurri API are:
-
-- Importing shipments
-- Getting the necessary documents (labels and/or commercial invoices)
-- Manifesting shipments
-
-The Scurri API works only on top of HTTPS, so that the connection is
-encrypted.
-
-The current document describes Scurri API at version `2.0.0`. This means that 
-all URLs should be prefixed with the path `/2.0.0/`.
+The key features of the Scurri API are importing shipments, retrieving documents, and manifesting labels.
 
 ### Concepts
 
@@ -80,32 +65,21 @@ import process to support importing thousands of shipments in one API call.
 
 #### Getting the label for a shipment
 
-After a shipment has been imported, Scurri will automatically
-allocate it to a carrier and a service based on the shipment rules you
-have defined in our user interface, alternatively you can specificy these 
-values manually in the API.
+Once a shipment has been imported, Scurri will automatically try to allocate a carrier and service to the shipment. This will be based off rules defined in the Shipment Rules. Alternatively, these can be overridden by manually specifying the carrier and service for a shipment.
 
-At this point Scurri will try to validate that the shipment meets the
-criteria for using the specified carrier and service, e.g. typically these 
-would be the weight limits, dimension limits and destination restrictions.
+Scurri will try to validate that the shipment can be allocated to the specified carrier and service.
 
-If the shipment does not fail the validation step you can download
-its label(s) and any customs documentation required, either as PDF documents or
-PNG. The latter is useful for embedding the label(s) in another document.
-After the label has been generated, the tracking number for the shipment is 
-available in the shipment details.
+If the shipment does not fail the validation step you can download its label/s and any customs documentation required, either as PDF documents or PNG. The latter is useful for embedding the label/s in another document.
 
-If, on the other hand, this validation had failed (that it exceeds the
-weight, dimension or destination limits and restrictions) then you
-would get an error back with the reason the validation failed.
+After the label has been generated, the tracking number for the shipment will be available in the shipment details.
+
+If the validation has failed (if it exceeds the weight, dimension or destination limits and restrictions) then an error will be returned.
 
 #### Manifesting shipments
 
-The last step is marking the shipments as manifested. When you do
-this, Scurri will generate the manifest documentation that you may
-have to provide to the carrier and at the same time notify the
-carrier. Note - Once you've manifested a conisgnment it will no longer
-be available for editing.
+The last step is to mark the shipment/s as manifested. This will result in Scurri generating a manifest document and notifying the carrier that a shipment is ready for collection. The manifest document can be given to the carrier on collection.
+
+Note: Once a shipment is manifested it will become non-editable.
 
 # Group Shipments
 
@@ -151,36 +125,36 @@ To do allocation using rules, please do not specify `carrier` and
     + Body
     
             {
-                "carrier": "Generic Carrier",
-                "service": "Generic Domestic Service GDOM"
+                “carrier”: “Generic Carrier”,
+                “service”: “Generic Domestic Service GDOM”
             }
     
     + Schema
             
             {
-                "properties": {
-                    "carrier": {
-                        "type": "string",
-                        "description": "Carrier name, use the field only for manual allocation."
+                “properties”: {
+                    “carrier”: {
+                        “type”: “string”,
+                        “description”: “Carrier name, use the field only for manual allocation.”
                     },
-                    "service": {
-                        "type": "string",
-                        "description": "Service identifier, use it only for manual allocation."
+                    “service”: {
+                        “type”: “string”,
+                        “description”: “Service identifier, use it only for manual allocation.”
                     },
-                    "package_type": {
-                        "type": "string",
-                        "description": "Service package type."
+                    “package_type”: {
+                        “type”: “string”,
+                        “description”: “Service package type.”
                     },
-                    "enhancements": {
-                        "type": "object",
-                        "description": "Map of service enhancements."
+                    “enhancements”: {
+                        “type”: “object”,
+                        “description”: “Map of service enhancements.”
                     },
-                    "incoterms_rule": {
-                        "type": "string",
-                        "description": "Incoterms rule, also known as customs invoice type in our V1 API."
+                    “incoterms_rule”: {
+                        “type”: “string”,
+                        “description”: “Incoterms rule, also known as customs invoice type in our V1 API.”
                     }
                 },
-                "required": ["carrier", "service"]
+                “required”: [“carrier”, “service”]
             }
             
 + Request allocation by rules (application/json)
@@ -192,28 +166,28 @@ To do allocation using rules, please do not specify `carrier` and
     + Body
     
             {
-                "shipment_method": "My rules set"
+                “shipment_method”: “My rules set”
             }
     
     + Schema
             
             {
-                "properties": {
-                    "shipment_method": {
-                        "type": "string",
-                        "description": "Order shipment method, used by Rules only."
+                “properties”: {
+                    “shipment_method”: {
+                        “type”: “string”,
+                        “description”: “Order shipment method, used by Rules only.”
                     },
-                    "package_type": {
-                        "type": "string",
-                        "description": "Service package type."
+                    “package_type”: {
+                        “type”: “string”,
+                        “description”: “Service package type.”
                     },
-                    "enhancements": {
-                        "type": "object",
-                        "description": "Map of service enhancements."
+                    “enhancements”: {
+                        “type”: “object”,
+                        “description”: “Map of service enhancements.”
                     },
-                    "incoterms_rule": {
-                        "type": "string",
-                        "description": "Incoterms rule, also known as customs invoice type in our V1 API."
+                    “incoterms_rule”: {
+                        “type”: “string”,
+                        “description”: “Incoterms rule, also known as customs invoice type in our V1 API.”
                     }
                 }
             }
@@ -223,47 +197,47 @@ To do allocation using rules, please do not specify `carrier` and
     + Body
     
             {
-                "status": "Allocated - ready for printing",
-                "message": "Carrier and service allocated.",
-                "carrier": "Generic Carrier",
-                "service": "Generic Domestic Service GDOM",
-                "enhancements": {},
-                "package_type": null,
-                "incoterms_rule": null
+                “status”: “Allocated - ready for printing”,
+                “message”: “Carrier and service allocated.“,
+                “carrier”: “Generic Carrier”,
+                “service”: “Generic Domestic Service GDOM”,
+                “enhancements”: {},
+                “package_type”: null,
+                “incoterms_rule”: null
             }
     
     + Schema
         
          {
-            "type": "object",
-            "properties": {
-                "status": {
-                    "type": "string",
-                    "description": "Shipment status."
+            “type”: “object”,
+            “properties”: {
+                “status”: {
+                    “type”: “string”,
+                    “description”: “Shipment status.”
                 },
-                "message": {
-                    "type": "string",
-                    "description": "Shipment status message. It is rejection reason when a shipment cannot be allocated."
+                “message”: {
+                    “type”: “string”,
+                    “description”: “Shipment status message. It is rejection reason when a shipment cannot be allocated.”
                 },
-                "carrier": {
-                    "type": "string",
-                    "description": "Carrier name shipment allocated to."
+                “carrier”: {
+                    “type”: “string”,
+                    “description”: “Carrier name shipment allocated to.”
                 },
-                "service": {
-                    "type": "string",
-                    "description": "Service identifier shipment allocated to."
+                “service”: {
+                    “type”: “string”,
+                    “description”: “Service identifier shipment allocated to.”
                 },
-                "package_type": {
-                    "type": "string",
-                    "description": "Shipment package type."
+                “package_type”: {
+                    “type”: “string”,
+                    “description”: “Shipment package type.”
                 },
-                "enhancements": {
-                    "type": "object",
-                    "description": "Map of shipment service enhancements."
+                “enhancements”: {
+                    “type”: “object”,
+                    “description”: “Map of shipment service enhancements.”
                 },
-                "incoterms_rule": {
-                    "type": "string",
-                    "description": "Shipment incoterms rule."
+                “incoterms_rule”: {
+                    “type”: “string”,
+                    “description”: “Shipment incoterms rule.”
                 }               
             }
          }
