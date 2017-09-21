@@ -116,6 +116,7 @@ To do allocation using rules, please do not specify `carrier` and
     + company_slug: `api-test-company` (string) - The slug of your company in Scurri.
     + identifier: `allocate-me` (string) - The identifier for the shipment.
 
+
 + Request manual allocation (application/json)
 
     + Headers
@@ -208,36 +209,36 @@ To do allocation using rules, please do not specify `carrier` and
     
     + Schema
         
-         {
-            "type": "object",
-            "properties": {
-                "status": {
-                    "type": "string",
-                    "description": "Shipment status."
-                },
-                "message": {
-                    "type": "string",
-                    "description": "Shipment status message. It is rejection reason when a shipment cannot be allocated."
-                },
-                "carrier": {
-                    "type": "string",
-                    "description": "Carrier name shipment allocated to."
-                },
-                "service": {
-                    "type": "string",
-                    "description": "Service identifier shipment allocated to."
-                },
-                "package_type": {
-                    "type": "string",
-                    "description": "Shipment package type."
-                },
-                "enhancements": {
-                    "type": "object",
-                    "description": "Map of shipment service enhancements."
-                },
-                "incoterms_rule": {
-                    "type": "string",
-                    "description": "Shipment incoterms rule."
-                }               
-            }
-         }
+            {
+                "type": "object",
+                "properties": {
+                    "status": {
+                        "type": "string",
+                        "description": "Shipment status."
+                    },
+                    "message": {
+                        "type": "string",
+                        "description": "Shipment status message. It is rejection reason when a shipment cannot be allocated."
+                    },
+                    "carrier": {
+                        "type": "string",
+                        "description": "Carrier name shipment allocated to."
+                    },
+                    "service": {
+                        "type": "string",
+                        "description": "Service identifier shipment allocated to."
+                    },
+                    "package_type": {
+                        "type": "string",
+                        "description": "Shipment package type."
+                    },
+                    "enhancements": {
+                        "type": "object",
+                        "description": "Map of shipment service enhancements."
+                    },
+                    "incoterms_rule": {
+                        "type": "string",
+                        "description": "Shipment incoterms rule."
+                    }               
+                }
+             }
