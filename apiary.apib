@@ -134,11 +134,12 @@ To do allocation using rules, please do not specify `carrier` and
     + Schema
             
             {
+                "$schema": "http://json-schema.org/draft-04/schema#",
                 "type": "object",
                 "properties": {
                     "carrier": {
                         "type": "string",
-                        "description": "Carrier name, use the field only for manual allocation."
+                        "description": "Carrier name, use it only for manual allocation."
                     },
                     "service": {
                         "type": "string",
@@ -176,6 +177,7 @@ To do allocation using rules, please do not specify `carrier` and
     + Schema
             
             {
+                "$schema": "http://json-schema.org/draft-04/schema#",
                 "type": "object",            
                 "properties": {
                     "shipment_method": {
