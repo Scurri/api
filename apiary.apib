@@ -3,16 +3,21 @@ HOST: https://sandbox.scurri.co.uk/api/2.0.0
 
 # Scurri API 2.0.0
 
-The Scurri Platform API is a RESTful web service that provides both import and update functionality for shipments, documents, and manifests.
+The Scurri Platform API is a RESTful web service that provides both import and 
+update functionality for shipments, documents, and manifests.
 
 ## HTTP Codes
 
-HTTP codes are used to differentiate between successful and failed responses. As per the HTTP standard: 20x codes are for successful requests, 40x codes for errors with validation or permissions, and 50x codes for unexpected internal server errors.
+HTTP codes are used to differentiate between successful and failed responses. 
+As per the HTTP standard: 20x codes are for successful requests, 40x codes for 
+errors with validation or permissions, and 50x codes for unexpected internal 
+server errors.
 
 
 ## Authentication
 
-All API requests need to be authenticated using [HTTP Basic Auth](https://en.wikipedia.org/wiki/Basic_access_authentication#Client_side).
+All API requests need to be authenticated using 
+[HTTP Basic Auth](https://en.wikipedia.org/wiki/Basic_access_authentication#Client_side).
 
 With Basic Auth, you have to send the username and password **base64-encoded** 
 in the standard Basic manner, e.g.
@@ -28,7 +33,8 @@ Here's how to generate the value of the header in Python:
 YXBpdGVzdDphcGkgdGVzdCBwYXNzd29yZA==
 ```
 
-All API requests must be made over HTTPS. Calls made over plain HTTP will fail. API requests without authentication will also fail.
+All API requests must be made over HTTPS. Calls made over plain HTTP will fail. 
+API requests without authentication will also fail.
 
 ## Request format
 
@@ -40,7 +46,8 @@ The `Content-Type` header must be set to `application/json`.
 
 ### General
 
-The key features of the Scurri API are importing shipments, retrieving documents, and manifesting labels.
+The key features of the Scurri API are importing shipments, retrieving 
+documents, and manifesting labels.
 
 ### Concepts
 
@@ -65,28 +72,148 @@ import process to support importing thousands of shipments in one API call.
 
 #### Getting the label for a shipment
 
-Once a shipment has been imported, Scurri will automatically try to allocate a carrier and service to the shipment. This will be based off rules defined in the Shipment Rules. Alternatively, these can be overridden by manually specifying the carrier and service for a shipment.
+Once a shipment has been imported, Scurri will automatically try to allocate a 
+carrier and service to the shipment. This will be based off rules defined in 
+the Shipment Rules. 
+Alternatively, these can be overridden by manually specifying the carrier and 
+service for a shipment.
 
-Scurri will try to validate that the shipment can be allocated to the specified carrier and service.
+Scurri will try to validate that the shipment can be allocated to the 
+specified carrier and service.
 
-If the shipment does not fail the validation step you can download its label/s and any customs documentation required, either as PDF documents or PNG. The latter is useful for embedding the label/s in another document.
+If the shipment does not fail the validation step you can download its label/s 
+and any customs documentation required, either as PDF documents or PNG. 
+The latter is useful for embedding the label/s in another document.
 
-After the label has been generated, the tracking number for the shipment will be available in the shipment details.
+After the label has been generated, the tracking number for the shipment will 
+be available in the shipment details.
 
-If the validation has failed (if it exceeds the weight, dimension or destination limits and restrictions) then an error will be returned.
+If the validation has failed (if it exceeds the weight, dimension or 
+destination limits and restrictions) then an error will be returned.
 
 #### Manifesting shipments
 
-The last step is to mark the shipment/s as manifested. This will result in Scurri generating a manifest document and notifying the carrier that a shipment is ready for collection. The manifest document can be given to the carrier on collection.
+The last step is to mark the shipment/s as manifested. This will result in 
+Scurri generating a manifest document and notifying the carrier that a 
+shipment is ready for collection. The manifest document can be given to the 
+carrier on collection.
 
 Note: Once a shipment is manifested it will become non-editable.
+
+# Data model
+
+## Shipment
+
+Main object representing a shipment. It consists of shipment own properties, as
+well as packages, destination address and carrier service properties.
+
+### Properties
+
+- identifier: unique-shipment-id (string, required) - The unique identifier for a shipment. 
+- order_number: test-order-number (string) - The order number. If order number is unique in your system, feel free to use it as shipment identifier.
+
 
 # Group Shipments
 
 This group of API calls allow you to interact with your shipments
 in Scurri. You can list and search through them, create new ones, get
-their status and print the necessary documentation (labels and custom
-invoices, when needed).
+their status, update them and print the necessary documentation (labels and 
+custom invoices, when needed).
+
+### Create a shipment [POST]
+
+You can use this API call to create one new shipment. 
+
+Scurri will do its best to store the data in the database and return a
+successful message, instead of validating the data against a carrier.
+That is, the validation process with a carrier is a step performed
+after a consignment has been created successfully.  The reason is that
+this way Scurri can decouple importing a consignment from allocating
+it to a specific carrier, each of which has different requirements.
+
+What this means in practice is that a success response for this API
+call does not mean that the shipment has been allocated to a
+carrier and service successfully.
+
+Additionally, most users will want their configured rules to 
+allocate a shipment to a carrier and service. These users should
+leave the carrier-related fields empty. If any of those are specified
+in the request, then they will take precedence over the rules.
+
+TODO: rename 
+Finally, some carriers support enhancements and carrier-specific options which
+must be specified in the "options" field, in example: Signed Consignments
+("signed") or Package Type ("package_type").
+
++ Request (application/json)
+    + Headers
+
+            Authorization: Basic YXBpdGVzdDphcGkgcGFzc3dvcmQgdGVzdA==
+
+    + Body
+
+            [
+              {
+                "carrier": "Generic Carrier",
+                "warehouse_id": "company-slug|Warehouse Name",
+                "service_id": "Generic Carrier|Generic International Service GCINT",
+                "identifier": "8a12630db404424b943e131ce4ee3976",
+                "packages": [
+                  {
+                    "items": [
+                      {
+                        "weight": 1.0,
+                        "value": 25.55,
+                        "fabric_content": "silk",
+                        "harmonisation_code": "5201",
+                        "country_of_origin": "GB",
+                        "sku": "822 JEANS",
+                        "quantity": 1,
+                        "name": "Jeans"
+                      }
+                    ],
+                    "length": 10.0,
+                    "height": 0.5,
+                    "width": 12.2,
+                    "reference": "CustomCustomerReference1"
+                  }
+                ],
+                "recipient": {
+                  "address": {
+                    "country": "IE",
+                    "postcode": "Y35 DW6E",
+                    "city": "Wexford",
+                    "address2": "The Bullring",
+                    "address1": "Innovation House",
+                    "state": "Wexford"
+                  },
+                  "contact_number": "072 8848292234",
+                  "email_address": "john@scurri.com",
+                  "company_name": "Scurri",
+                  "name": "John Doe"
+                },
+                "order_number": "8384832",
+                "options": {
+                  "package_type": "Parcel",
+                  "signed": "yes"
+                }
+              }
+            ]
+
++ Response 201 (application/json)
+
+    The response has 2 entries: one is a dictionary for errors and one
+    a list of successful imports.
+
+    + Body
+
+            {
+               "errors": {},
+                "success": [
+                    "8a12630db404424b943e131ce4ee3976"
+                ]
+            }
+
 
 ## Allocation [POST /company/{company_slug}/shipments/{identifier}/allocate/]
 
